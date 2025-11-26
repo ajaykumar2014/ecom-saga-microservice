@@ -107,5 +107,9 @@ SHIPMENT_FAILED
 curl --location 'http://localhost:9099/shipping/<shipping_id>/<shipping_status>'
 curl --location 'http://localhost:9099/shipping/5a6e4d3f-2a4b-46f7-b335-d53e1f3b681a/SHIPPED_CANCELLED'
 ```
-
+## Common lib module
+run and build a artifact
+```
+./gradlew clean build  publishToMavenLocal
+```
 
