@@ -1,0 +1,20 @@
+package com.ecom.sage.common.entity;
+
+
+public enum OrderStatus {
+    PENDING,
+    PAYMENT_COMPLETED,
+    PAYMENT_PENDING,
+    PAYMENT_FAILED,
+    PAYMENT_REVERTED,
+    INVENTORY_RESERVED,
+    INVENTORY_ROLLBACK,
+    INVENTORY_FAILED,
+    SHIPPED,
+    SHIPPED_READY,
+    SHIPPED_CANCELLED,
+    SHIPMENT_FAILED,
+    COMPLETED,
+    CANCELLED
+}
+

@@ -1,0 +1,16 @@
+CREATE TABLE inventory (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    product_id VARCHAR(100) NOT NULL UNIQUE,
+    product_details VARCHAR(100) NOT NULL UNIQUE,
+    available_quantity INT NOT NULL DEFAULT 0,
+    price_per_unit DECIMAL(10,2) NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE inventory_reservations (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id VARCHAR(100) NOT NULL,
+    product_id VARCHAR(100) NOT NULL,
+    reserved_quantity INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

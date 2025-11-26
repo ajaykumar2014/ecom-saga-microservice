@@ -1,0 +1,80 @@
+server:
+  port: 9095
+spring:
+  application:
+    name: order-service
+  web:
+    resources:
+      add-mappings: false
+  datasource:
+    url: jdbc:h2:mem:orderDB
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+    initialization-mode: always
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:/sql/order-schema.sql
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  h2:
+    console:
+      path: /h2-console
+      enabled: true
+      settings:
+        web-allow-others: true
+        trace: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    topic:
+      orderInventoryEventChannel: order-inventory-event-topic
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: true
+        spring.json.trusted.packages: "*"
+
+    consumer:
+      group-id: saga-ecommerce-order
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.add.type.headers: true
+        spring.json.trusted.packages: "*"
+
+resilience4j:
+##  Configure RateLimiter on REST API and ensure that max 5 request would be handled per sec as per below configuration
+##  and throw limit exception when it exceeds.
+  ratelimiter:
+    instances:
+      orderRateLimiter:
+        timeoutDuration: 0     # If limit exceeded → immediately return failure (no wait)
+        limitRefreshPeriod: 1s # Window resets every 1 seconds
+        limitForPeriod: 5      # Only 5 calls allowed per window
+##  In below configuration, CircuitBreaker analysis last 10 calls using slidingWindowSize,
+##  minimumNumberOfCalls:5 - after 5 calls Circuit become OPEN or failureRateThreshold is 50% then OPEN until waitDurationInOpenState: 10sec.
+##  else Circuit remain CLOSED
+  circuitbreaker:
+    instances:
+      productCB:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+##  Configure Bulkhead on REST API and ensure that max 5 concurrent request will be accepted without no waiting timeout i.e 0
+##  otherwise it failed with too many request.
+  bulkhead:
+    instances:
+      orderServiceBulkhead:
+        maxConcurrentCalls: 5
+        maxWaitDuration: 0
+
+logging:
+  level:
+    io.github.resilience4j.ratelimiter: DEBUG

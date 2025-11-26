@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS payment_transaction;
+CREATE TABLE payment_transaction (
+    id VARCHAR(100) NOT NULL PRIMARY KEY,
+    order_id VARCHAR(100) NOT NULL,
+    outstanding_amount DECIMAL(10,2) NOT NULL,
+    paid_amount DECIMAL(10,2) NOT NULL,
+    status VARCHAR(50) NOT NULL,   -- PENDING / SUCCESS / FAILED
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);

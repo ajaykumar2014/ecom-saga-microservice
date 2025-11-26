@@ -1,0 +1,84 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.0'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.ecom.sage.order.api'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+
+
+ext {
+    set('springCloudVersion', "2025.0.0")
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.kafka:spring-kafka'
+    runtimeOnly 'com.h2database:h2'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'io.rest-assured:rest-assured:5.4.0'
+    testImplementation 'io.rest-assured:spring-mock-mvc:5.4.0'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'com.google.flogger:flogger:0.7.4'
+    implementation "com.ecom.sage.common:common-events:1.1.0"
+    implementation 'org.springframework.retry:spring-retry'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'io.github.resilience4j:resilience4j-spring-boot3'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    implementation("io.github.openfeign:feign-jackson:9.3.1")
+    implementation 'io.github.resilience4j:resilience4j-spring-boot3'
+    // Choose one backend (at least one is required)
+    implementation 'com.google.flogger:flogger-system-backend:0.7.4'   // logs to System.err
+    implementation 'com.google.flogger:flogger-slf4j-backend:0.7.4'
+    testImplementation "org.springframework.kafka:spring-kafka-test"
+    testImplementation "org.testcontainers:testcontainers"
+    testImplementation "org.springframework.kafka:spring-kafka-test"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.10.2"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.2"
+    testImplementation "org.testcontainers:testcontainers"
+    testImplementation "org.testcontainers:kafka"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+
+    testImplementation "org.springframework.kafka:spring-kafka-test"
+    testImplementation "org.apache.kafka:kafka-clients"
+
+
+}
+repositories {
+    mavenLocal()   // IMPORTANT
+    mavenCentral()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

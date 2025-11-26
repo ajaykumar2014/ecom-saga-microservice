@@ -1,0 +1,62 @@
+server:
+  port: 9099
+spring:
+  application:
+    name: shipping-service
+  web:
+    resources:
+      add-mappings: false
+  datasource:
+    url: jdbc:h2:mem:shippingDB
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+    initialization-mode: always
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:/sql/shipping-schema.sql
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  h2:
+    console:
+      path: /h2-console
+      enabled: true
+      settings:
+        web-allow-others: true
+        trace: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    topic:
+      paymentShippingEventChannel: payment-shipping-event-topic
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: true
+        spring.json.trusted.packages: "*"
+
+    consumer:
+      group-id: saga-ecommerce-shipping
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.add.type.headers: true
+        spring.json.trusted.packages: "*"
+
+resilience4j:
+  retry:
+    instances:
+      publishRetry:
+        max-attempts: 3
+        wait-duration: 500ms
+  circuitbreaker:
+    instances:
+      publishCB:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
